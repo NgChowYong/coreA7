@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/A7core.iml" filepath="$PROJECT_DIR$/.idea/A7core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../window_to_dk2/ssh_to_walle_gui/.idea/SSH_To_Walle_GUI.iml" filepath="$PROJECT_DIR$/../window_to_dk2/ssh_to_walle_gui/.idea/SSH_To_Walle_GUI.iml" />
+    </modules>
+  </component>
+</project>
