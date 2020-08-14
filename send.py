@@ -4,7 +4,7 @@
 
 import socket
 
-HOST = '192.168.43.77'  # Standard loopback interface address (localhost)
+HOST = '192.168.0.235'  # Standard loopback interface address (localhost)
 PORT = 11223        # Port to listen on (non-privileged ports are > 1023)
 
 count = 0
@@ -29,7 +29,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s: # stream using TCP,
                     # send data to client
                     conn.sendall(data)
                 else:
-                    data = 'PC,R,1,-2,C,11,23,P,2,3,4,5,6,7,8,9,12,13,E'
+                    #data = 'PC,R,1,-2,2,4,C,11,23,P,2,3,4,5,6,7,8,9,12,13,E'
+                    data = 'PC,R,1,-2,2,4,E'
                     data = data.encode("utf-8")
                     # send data to client
                     conn.sendall(data)

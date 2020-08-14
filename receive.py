@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 import socket
 import subprocess
+import pipes
+import io
 
+# HOST = '192.168.0.235'  # The server's hostname or IP address
+HOST = '192.168.0.199'  # The server's hostname or IP address
+PORT = 11223  # The port used by the server
 
 # example for using function below
-# data = 'PC,R,1,-2,O,2,3,4,5,6,7,C,11,23,P,2,3,4,5,6,7,8,9,12,13,E'
+# data = 'PC,R,1,-2,3,O,2,3,4,5,6,7,C,11,23,6,P,2,3,4,5,6,7,8,9,12,13,E'
 # data = data.split(',')
 # data = data_spliting(data)
 # pocess data from PC and output standard output to send to stm
@@ -46,12 +51,13 @@ def data_spliting(data):
 # process data from standard output and send separately into STM
 # data 0 1 2 3 = Robot Obstacle CameraPose Path
 def send_to_dk2(data):
+    global data_receive
     for i in range(len(data)):
         if len(data[i]) > 1:
             send_str = "----"
             if i == 0:  # Robot
                 send_str = send_str + "R,"
-                send_str = send_str + str(data[i][0]) + "," + str(data[i][1]) + ","
+                send_str = send_str + str(data[i][0]) + "," + str(data[i][1]) + "," + str(data[i][2]) + "," + str(data[i][3]) + ","
             elif i == 1:  # Obs
                 send_str = send_str + "O,"
                 for j in range(int(len(data[i])/2)):
@@ -65,10 +71,18 @@ def send_to_dk2(data):
                     send_str = send_str + str(data[i][j*2]) + "," + str(data[i][j*2 + 1]) + ","
             send_str = send_str.rstrip(',')
             send_str = send_str + "--"
+
             f = open("/dev/ttyRPMSG0", "w")
-            result = subprocess.run(['echo', send_str], stdout=f)
-            print(result.stdout)
-            print(send_str)
+            f2 = open("/dev/ttyRPMSG0", "r")
+            result = subprocess.Popen(['echo', send_str], stdout=f)
+            result.communicate()
+            # subprocess.run(['echo', send_str], stdout=f)
+            
+            print('send data:',send_str)
+            data_receive = f2.readline()
+            if data_receive != send_str:
+                print('data read:', data_receive)
+
 
 # command list
 cmd1 = ['cat', '/sys/class/remoteproc/remoteproc0/state']
@@ -90,10 +104,10 @@ if result == "offline":
     print(result)
 
 # start listening to PC
-HOST = '192.168.43.77'  # The server's hostname or IP address
-PORT = 11223  # The port used by the server
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+
+    global data_receive
     s.connect((HOST, PORT))
     # send DK2 as first connection word
     data = "DK2"
@@ -115,12 +129,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             send_to_dk2(data)
 
             # send again
-            data = "DK2"
+            data = "DK2,"+ data_receive
+            print('sending to PC:', data)
             data = data.encode("utf-8")
             s.sendall(data)
 
 # closed Core M4
-f = open("/sys/class/remoteproc/remoteproc0/state", "w")
-result = subprocess.run(cmd4, stdout=f)
+# f = open("/sys/class/remoteproc/remoteproc0/state", "w")
+# result = subprocess.run(cmd4, stdout=f)
 
 print('Received', repr(data))
