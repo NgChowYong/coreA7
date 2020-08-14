@@ -77,11 +77,12 @@ def send_to_dk2(data):
             result = subprocess.Popen(['echo', send_str], stdout=f)
             result.communicate()
             # subprocess.run(['echo', send_str], stdout=f)
-            
             print('send data:',send_str)
             data_receive = f2.readline()
             if data_receive != send_str:
                 print('data read:', data_receive)
+            result.terminate()
+            f2.close()
 
 
 # command list
