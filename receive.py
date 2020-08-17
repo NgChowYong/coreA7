@@ -82,6 +82,7 @@ def send_to_dk2(data):
             if data_receive != send_str:
                 print('data read:', data_receive)
             result.terminate()
+            f.close()
             f2.close()
 
 
