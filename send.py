@@ -30,7 +30,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s: # stream using TCP,
                     conn.sendall(data)
                 else:
                     #data = 'PC,R,1,-2,2,4,C,11,23,P,2,3,4,5,6,7,8,9,12,13,E'
-                    data = 'PC,R,1,-2,2,4,E'
+                    #data = 'PC,P,500,-500,500,500,500,-500,-500,-500,1400,E'
+                    data = 'PC,P,500,-500,1400,E'
+
                     data = data.encode("utf-8")
                     # send data to client
                     conn.sendall(data)

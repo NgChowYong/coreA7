@@ -52,6 +52,8 @@ def data_spliting(data):
 # data 0 1 2 3 = Robot Obstacle CameraPose Path
 def send_to_dk2(data):
     global data_receive
+    f = open("/dev/ttyRPMSG0", "w")
+    f2 = open("/dev/ttyRPMSG0", "r")
     for i in range(len(data)):
         if len(data[i]) > 1:
             send_str = "----"
@@ -67,23 +69,24 @@ def send_to_dk2(data):
                 send_str = send_str + str(data[i][0]) + "," + str(data[i][1]) + ","
             elif i == 3:  # Path
                 send_str = send_str + "P,"
-                for j in range(int(len(data[i])/2)):
-                    send_str = send_str + str(data[i][j*2]) + "," + str(data[i][j*2 + 1]) + ","
+                for j in range(int((len(data[i])-1)/2)):
+                    if j == int((len(data[i])-1)/2) - 1:
+                        send_str = send_str + str(data[i][j*2]) + "," + str(data[i][j*2 + 1]) + "," + str(data[i][j*2 + 2]) + ","
+                    else:
+                        send_str = send_str + str(data[i][j*2]) + "," + str(data[i][j*2 + 1]) + ","
             send_str = send_str.rstrip(',')
             send_str = send_str + "--"
 
-            f = open("/dev/ttyRPMSG0", "w")
-            f2 = open("/dev/ttyRPMSG0", "r")
+            print('send data:',send_str)
             result = subprocess.Popen(['echo', send_str], stdout=f)
             result.communicate()
             # subprocess.run(['echo', send_str], stdout=f)
-            print('send data:',send_str)
             data_receive = f2.readline()
             if data_receive != send_str:
                 print('data read:', data_receive)
             result.terminate()
-            f.close()
-            f2.close()
+    f.close()
+    f2.close()
 
 
 # command list
